@@ -1,0 +1,42 @@
+gservices:
+  postgresdb:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: ridesharingdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ridesharing-net
+
+  backend:
+    image: srinivasasathwik2006/docker-backend-2400030159:latest
+    container_name: docker-springboot
+    ports:
+      - "2025:2000"
+    depends_on:
+      - postgresdb
+    restart: on-failure
+    networks:
+      - ridesharing-net
+
+  frontend:
+    image: srinivasasathwik2006/docker-frontend-2400030159:latest
+    container_name: docker-react
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: on-failure
+    networks:
+      - ridesharing-net
+
+networks:
+  ridesharing-net:
+
+volumes:
+  postgres_data:
